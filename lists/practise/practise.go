@@ -2,32 +2,71 @@ package main
 
 import "fmt"
 
-
-func printHobbiesArrays() *[]string{
-	hobbies :=[]string{"reading", "swimming", "cooking"}
+func printHobbiesArrays() *[]string {
+	hobbies := []string{"reading", "swimming", "cooking"}
 	//print it using for loop auto
-	for _, hobby := range hobbies{
+	for _, hobby := range hobbies {
 		fmt.Println(hobby)
 	}
 	return &hobbies
 }
 
-func printSlices(h *[]string){
-	
+func printSlices2(h *[]string) *[]string {
 
 	fmt.Println("First element:", (*h)[0])
-	fmt.Println("First element:", (*h)[1:])
-
+	fmt.Println("Second and third element combined:", (*h)[1:])
+	return h
 
 }
 
-func main(){
-	printSlices(printHobbiesArrays())
+func printSlices3(h *[]string) *[]string {
+	fmt.Println("the first and second elements:", (*h)[:2])
+	return h
 }
 
+func printSlices4(h *[]string) *[]string {
+	fmt.Println("Re-slice the slice from (3) and change it to contain the second and last element of the original array.:", (*h)[1:3])
+	return h
+}
+
+type Product struct{
+	id string
+	title string
+	price float64
+}
+
+func main() {
+	slice := printSlices2(printHobbiesArrays())
+
+	slice = printSlices3(slice)
+
+	printSlices4(slice)
+
+	goals := []string{"learn Go", "Make profit for the CBT projects"}
+	fmt.Println(goals)
 
 
+	goals[1] = "I don't want to change it"
+	goals = append(goals, "Be a better programmer")
 
+	fmt.Println(goals)
+
+	products := []Product{
+		{"jfiwjrf83", "snowboard", 12.32},
+		{"kjfuhf737", "book", 12.32},
+	}
+	
+	fmt.Println(products)
+	
+	newProduct := Product{
+		"kjfuhf7372312", "book2", 12.32,
+	}
+	
+	products = append(products, newProduct)
+	fmt.Println(products)
+	
+
+}
 
 // Time to practice what you learned!
 
