@@ -2,20 +2,26 @@ package filemanager
 
 import (
 	"bufio"
+	"encoding/json"
 	"errors"
 	"os"
 )
 
-func ReadLines(path string) ([]string, error){
-	file, err := os.Open(path)
-	if err != nil{
-	return nil, errors.New("Could not open file: " + err.Error())
+type FileManager struct{
+	InputFilePath string
+	OutputFilePath string
+}
+
+func (fm FileManager) ReadLines() ([]string, error) {
+	file, err := os.Open(fm.InputFilePath)
+	if err != nil {
+		return nil, errors.New("Could not open file: " + err.Error())
 	}
 	scanner := bufio.NewScanner(file)
 
 	var lines []string
 
-	for scanner.Scan(){
+	for scanner.Scan() {
 		lines = append(lines, scanner.Text())
 	}
 
@@ -25,6 +31,30 @@ func ReadLines(path string) ([]string, error){
 		file.Close()
 		return nil, errors.New("Failed to read line in file.")
 	}
- 
+
 	return lines, nil
+}
+
+func (fm FileManager) WriteResult(data any) error {
+	file, err := os.Create(fm.OutputFilePath)
+	if err != nil {
+		return errors.New("Could not create file: " + err.Error())
+	}
+	encoder := json.NewEncoder(file)
+	err = encoder.Encode(data)
+	if err != nil {
+		file.Close()
+		return errors.New("Could not encode data to JSON: " + err.Error())
+	}
+	file.Close()
+	return nil
+}
+
+
+func New(inputPath, outputPath string) FileManager{
+	return FileManager{
+		InputFilePath: inputPath,
+		OutputFilePath: outputPath,
+	}
+
 }

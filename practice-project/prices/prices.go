@@ -1,73 +1,62 @@
 package prices
 
 import (
-	"bufio"
 	"fmt"
-	"os"
 
 	"example.com/practice-project/conversion"
+	"example.com/practice-project/iomanager"
 )
 
 type TaxInlcudedPriceJob struct {
-	TaxRate           float64
-	InputPrices       []float64
-	TaxIncludedPrices map[string]float64
-} 
+	IOManager         iomanager.IOManager `json:"-"`
+	TaxRate           float64             `json:"tax_rate"`
+	InputPrices       []float64           `json:"input_prices"`
+	TaxIncludedPrices map[string]string   `json:"tax_included_prices"`
+}
 
-func (job *TaxInlcudedPriceJob) LoadData() {
-	// file, err := os.Open("prices.txt")
-	// if err != nil {
-	// 	fmt.Println("Could not !")
-	// 	fmt.Println(err)
-	// 	return
-	// }
-	// scanner := bufio.NewScanner(file)
+func (job *TaxInlcudedPriceJob) LoadData() error {
 
-	// var lines []string
+	lines, err := job.IOManager.ReadLines()
 
-	// for scanner.Scan() {
-	// 	lines = append(lines, scanner.Text())
-	// }
-	// err = scanner.Err()
-
-	// if err != nil {
-	// 	fmt.Println("Reading the file failed")
-	// 	fmt.Println(err)
-	// 	file.Close()
-	// 	return
-	// }
+	if err != nil {
+		return err
+	}
 
 	prices, err := conversion.StringsToFloats(lines)
 
-	
 	if err != nil {
-		fmt.Println(err)
-		file.Close()
-		return
+		return err
 	}
 
 	job.InputPrices = prices
 
-	file.Close()
+	return nil
 
 }
 
-func (job *TaxInlcudedPriceJob) Process() {
+func (job *TaxInlcudedPriceJob) Process() error {
 
-	job.LoadData()
+	err := job.LoadData()
+
+	if err != nil {
+		return err
+	}
 
 	result := make(map[string]string)
 	for _, price := range job.InputPrices {
 		taxIncludedPrice := price * (1 + job.TaxRate)
-		result[fmt.Sprintf("%.2f", price)] = fmt.Sprintf("%.2f",taxIncludedPrice)
+		result[fmt.Sprintf("%.2f", price)] = fmt.Sprintf("%.2f", taxIncludedPrice)
 	}
 
-	fmt.Println(result)
+	job.TaxIncludedPrices = result
+
+	return job.IOManager.WriteResult(job)
 
 }
 
-func NewTaxIncludedPriceJob(taxRate float64) *TaxInlcudedPriceJob {
+func NewTaxIncludedPriceJob(iom iomanager.IOManager, taxRate float64) *TaxInlcudedPriceJob {
 	return &TaxInlcudedPriceJob{
+		IOManager:   iom,
 		InputPrices: []float64{10, 20, 30},
 		TaxRate:     taxRate,
 	}
