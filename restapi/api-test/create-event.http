@@ -1,0 +1,23 @@
+POST http://localhost:8080/events
+Content-Type: application/json
+
+{
+    "name":"Test event",
+    "description":"A test event",
+    "location":"A test location",
+    "dateTime":"2026-01-01T15:30:00.000Z"
+}
+
+
+PUT http://localhost:8080/events/3
+Content-Type: application/json
+
+{
+    "name":"a[sld[askld[paslkdp[a]]]] Test event",
+    "description":"Updated A test event",
+    "location":"Updated A test location",
+    "dateTime":"2026-01-01T15:35:00.000Z"
+}
+
+
+
