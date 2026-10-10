@@ -1,7 +1,7 @@
 package main
 
 import (
-	routes "example.com/restapi/api-test/routes"
+	routes "example.com/restapi/routes"
 	"example.com/restapi/db"
 	"github.com/gin-gonic/gin"
 )

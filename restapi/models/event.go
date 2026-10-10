@@ -30,9 +30,7 @@ func (e *Event) Update() error {
 
 	return err
 
-
 }
-
 
 func (e Event) Save() error {
 	query := `INSERT INTO events(name, description, location, dateTime, user_id) 
@@ -69,10 +67,10 @@ func GetAllEvents() ([]Event, error) {
 
 	var events []Event
 
-	for rows.Next(){
+	for rows.Next() {
 		var event Event
-		err := rows.Scan(&event.ID, &event.Name,&event.Description,&event.Location,&event.DateTime, &event.UserID)
-		if err != nil{
+		err := rows.Scan(&event.ID, &event.Name, &event.Description, &event.Location, &event.DateTime, &event.UserID)
+		if err != nil {
 			return nil, err
 		}
 
@@ -84,19 +82,34 @@ func GetAllEvents() ([]Event, error) {
 	return events, nil
 }
 
-func GetEventById(id int64)(*Event, error){
+func GetEventById(id int64) (*Event, error) {
 
 	query := `SELECT * FROM events WHERE ID = ?`
 	row := db.DB.QueryRow(query, id)
 
 	var event Event
 
-	err:=row.Scan(&event.ID, &event.Name,&event.Description,&event.Location,&event.DateTime, &event.UserID)
+	err := row.Scan(&event.ID, &event.Name, &event.Description, &event.Location, &event.DateTime, &event.UserID)
 
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 
 	return &event, nil
 
+}
+
+func (event Event) Delete() error {
+	query := `DELETE FROM events WHERE ID = ?`
+	stmt, err := db.DB.Prepare(query)
+
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.Exec(event.ID)
+
+	return err
 }
