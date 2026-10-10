@@ -18,6 +18,6 @@ func GenerateToken(email string, userId int64) (string, error){
 
 func VerifyToken(token string){
 	jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
-		return secretKey, nils
+		return secretKey, nil
 	})
 }
